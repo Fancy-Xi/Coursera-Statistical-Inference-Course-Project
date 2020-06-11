@@ -1,0 +1,125 @@
+---
+title: 'Peer-graded Assignment: Statistical Inference Course Project'
+author: "Xi Fang"
+date: "6/11/2020"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Part 1: Simulation Exercise 
+This project will investigate the exponential distribution in R and compare it with the Central Limit Theorem. The exponential distribution can be simulated in R with rexp(n, lambda) where lambda is the rate parameter. The mean of exponential distribution is 1/lambda and the standard deviation is also 1/lambda. Set lambda = 0.2 for all of the simulations. I will investigate the distribution of averages of 40 exponentials. 
+
+Illustrate via simulation and associated explanatory text the properties of the distribution of the mean of 40 exponentials. 
+
+#### Q1. Show the sample mean and compare it to the theoretical mean of the distribution.
+```{r simulation}
+library(ggplot2)
+ l <- 0.2 # the rate parameter
+ nsam <- 40 # sample size
+ nsim <- 1000 # simulation size
+ samplemean <- NULL
+ for (i in 1:nsim) {
+         samplemean <- c(samplemean, mean(rexp(nsam,l)))
+ }
+ mean(samplemean)
+ mean_theo <- 1/l # theoretical mean
+ mean_theo
+```
+The mean is very close to the theoretical mean distribution of 5.
+
+
+#### Q2. Show how variable the sample is (via variance) and compare it to the theoretical variance of the distribution.
+
+```{r q2}
+sigma_theo <- 1/l/sqrt(nsam) # theoretical standard error
+var_theo <- sigma_theo^2 # theoretical variance
+var_sam <- var(samplemean)
+var_theo
+var_sam
+```
+The sample variance is very close to the theoretical variance.
+
+#### Q3. Show that the distribution is approximately normal.
+
+```{r q3}
+hist(samplemean, breaks = nsam, prob = T, col = 'orange', xlab = "mean")
+x <- seq(min(samplemean), max(samplemean), length=100)
+lines(x, dnorm(x, mean = 1/l, sd=(1/l/sqrt(nsam))), pch=25, col="red")
+
+```
+```{r}
+qqnorm(samplemean)
+qqline(samplemean, col="green")
+
+```
+The sample distribution is very close to a normal distribution.
+
+## Part 2: Basic Inferential Data Analysis
+This report will analyze the ToothGrowth data in the R datasets package
+#### Q1. Load the ToothGrowth data and perform some basic exploratory data analyses
+```{r p2q1}
+library(datasets)
+data("ToothGrowth")
+str(ToothGrowth)
+dim(ToothGrowth)
+names(ToothGrowth)
+```
+#### Q2. Provide a basic summary of the data.
+```{r p2q2}
+library(ggplot2)
+summary(ToothGrowth)
+ggplot(data=ToothGrowth, aes(x=as.factor(dose), y=len, fill=supp)) +
+        geom_bar(stat = "identity") +
+        facet_grid(supp~.) +
+        xlab("Dose(mg)") +
+        ylab("Tooth length")
+ggplot(data = ToothGrowth, aes(x=supp, y=len)) + geom_boxplot(aes(fill=supp)) +
+        xlab("Supplement Type") + ylab ("Tooth Length")
+
+
+
+```
+#### Q3. Use confidence intervals and hypothesis test to compare tooth growth by supp and dose. (Only use the techniques from class, even if there's other approaches worth considering)
+```{r p2q3}
+unique(ToothGrowth$dose) # three dose groups
+ggplot(aes(x=factor(dose), y=len), data= ToothGrowth) +
+        geom_boxplot(aes(fill = factor(dose))) +
+        labs(title = "Tooth Length & Dosage")
+h1 <- t.test(len ~ supp, data = ToothGrowth)
+h1
+
+h2 <- t.test(len ~ supp, data = subset (ToothGrowth, dose == 0.5))
+h2
+
+h3 <- t.test(len ~ supp, data = subset (ToothGrowth, dose == 1))
+h3
+
+h4 <- t.test(len ~ supp, data = subset (ToothGrowth, dose == 2))
+h4
+```
+
+## Conclusions
+OJ leads to more teeth growth than AC for dosages 0.5 and 1.0. OJ and AC were not different for teeth growth at dose 2.0. However, overall, OJ and AC were not significantly different in terms of the effeciency for teeth growth.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
