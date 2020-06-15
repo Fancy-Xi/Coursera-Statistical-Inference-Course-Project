@@ -14,7 +14,7 @@ This project will investigate the exponential distribution in R and compare it w
 
 Illustrate via simulation and associated explanatory text the properties of the distribution of the mean of 40 exponentials. 
 
-#### Q1. Show the sample mean and compare it to the theoretical mean of the distribution.
+#### Q1. Show the sample mean and compare it to the theoretical mean of the distribution.  
 ```{r simulation}
 library(ggplot2)
  l <- 0.2 # the rate parameter
